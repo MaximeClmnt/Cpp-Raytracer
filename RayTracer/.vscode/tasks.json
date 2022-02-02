@@ -1,0 +1,33 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: g++.exe générer le fichier actif",
+            "command": "C:\\MinGW\\bin\\g++.exe",
+            "args": [
+                "-fdiagnostics-color=always",
+                "-g",
+                "${workspaceFolder}\\main.cpp",
+                "${workspaceFolder}\\material.cpp",
+                "${workspaceFolder}\\ray.cpp",
+                "${workspaceFolder}\\scene.cpp",
+                "${workspaceFolder}\\sphere.cpp",
+                "${workspaceFolder}\\vector.cpp",
+                "-o",
+                "${workspaceFolder}\\bin\\main.exe"
+            ],
+            "options": {
+                "cwd": "C:\\MinGW\\bin"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Tâche générée par le débogueur."
+        }
+    ],
+    "version": "2.0.0"
+}
