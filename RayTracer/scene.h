@@ -1,16 +1,9 @@
-//
-//  scene.hpp
-//  
-//
-//  Created by José Magalhaes  on 19/01/2022.
-//
-
-#include <vector>
-
-#include "sphere.h"
-
 #ifndef scene_h
 #define scene_h
+
+#include "vector.h"
+#include "sphere.h"
+#include "ray.h"
 
 class Scene{
     std::vector<Sphere> _spheres;

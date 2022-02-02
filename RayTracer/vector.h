@@ -1,9 +1,3 @@
-//
-//  sphere.h
-//  
-//
-//  Created by Maxime CLEMENT  on 18/01/2022.
-//
 #include <iostream>
 
 #ifndef vector_h

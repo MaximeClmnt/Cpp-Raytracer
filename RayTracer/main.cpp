@@ -8,39 +8,41 @@
 #include "stb_image.h"
 
 
+#define _USE_MATH_DEFINES
 #include <math.h>
-#define pi M_PI
+
 #include <assert.h>
 #include <iostream>
 
 #include "vector.h"
+#include "scene.h"
+#include "material.h"
 #include "ray.h"
 #include "sphere.h"
-#include "scene.h"
-
-
  
 int main() {
     int W = 512;
     int H = 512;
     
     Vector cam_center(-0.,.6,0.);
-    float fov = pi/2;
+    float fov = M_PI/2;
     
     Scene scene;
     
     //Walls
+    /*
     scene.add_sphere(Sphere(Vector(0.,0.,-104.),100,MATERIAL_RED));
     scene.add_sphere(Sphere(Vector(0.,0.,+104.),100,MATERIAL_CYAN));
     scene.add_sphere(Sphere(Vector(-103.,0.,0.),100,MATERIAL_BLUE));
     scene.add_sphere(Sphere(Vector(+103.,0.,0.),100,MATERIAL_YELLOW));
     scene.add_sphere(Sphere(Vector(0.,-100.,0.),100,MATERIAL_GREEN));
     scene.add_sphere(Sphere(Vector(0.,+103.,0.),100,MATERIAL_MAGENTA));
-    
+    */
+   
     //Center Sphere
     //scene.add_sphere(Sphere(Vector(0.4,0.4,-2.),.4,MATERIAL_MIRROR));
     scene.add_sphere(Sphere(Vector(0.,0.6,-1.),0.5,Material(Vector(0, 0, 0),MATERIAL_TYPE_TRANSPARENT,1.1)));
-    scene.add_sphere(Sphere(Vector(0.,0.6,-1.),-0.49,Material(Vector(0, 0, 0),MATERIAL_TYPE_TRANSPARENT,1.1)));
+    //scene.add_sphere(Sphere(Vector(0.,0.6,-1.),-0.49,Material(Vector(0, 0, 0),MATERIAL_TYPE_TRANSPARENT,1.1)));
     
     scene.set_light(Vector(1.,2.,0.), 1000000.);
     scene.set_n_brdf(0);

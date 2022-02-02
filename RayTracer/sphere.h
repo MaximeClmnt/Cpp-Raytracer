@@ -1,15 +1,12 @@
-//
-//  sphere.hpp
-//  
-//
-//  Created by José Magalhaes  on 19/01/2022.
-//
-#include "vector.h"
-#include "ray.h"
-#include "material.h"
 
 #ifndef sphere_h
 #define sphere_h
+
+#include "vector.h"
+#include "material.h"
+#include "ray.h"
+class Ray;
+class Hit;
 
 class Sphere{
     Vector _center;
@@ -29,7 +26,9 @@ public:
         _sq_radius = _radius*_radius;
     }
     
-    bool intersect(Ray& r, Vector& hit_pos, Vector& hit_norm, float& hit_dist);
+    void intersect(Ray& r, Hit& hit); 
+
+    Vector get_normal_at(Vector& position);
     
     void set_radius(const float radius_);
     

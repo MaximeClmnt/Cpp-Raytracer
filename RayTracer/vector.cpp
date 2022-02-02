@@ -1,9 +1,3 @@
-//
-//  sphere.cpp
-//  
-//
-//  Created by Maxime CLEMENT  on 18/01/2022.
-//
 #include <math.h>
 
 #include "vector.h"

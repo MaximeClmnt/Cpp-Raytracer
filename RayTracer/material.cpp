@@ -1,11 +1,5 @@
-//
-//  material.cpp
-//  
-//
-//  Created by José Magalhaes  on 19/01/2022.
-//
-
 #include "material.h"
+#include "vector.h"
 
 Material::Material(){
     _albedo = Vector(1.,1.,1.);

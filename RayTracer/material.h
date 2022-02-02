@@ -1,13 +1,8 @@
-//
-//  material.hpp
-//  
-//
-//  Created by José Magalhaes  on 19/01/2022.
-//
-#include "vector.h"
-
 #ifndef material_h
 #define material_h
+
+#include "vector.h"
+
 
 #define MATERIAL_RED Material(Vector(1.,0.00001,0.00001))
 #define MATERIAL_GREEN Material(Vector(0.00001,1.,0.00001))

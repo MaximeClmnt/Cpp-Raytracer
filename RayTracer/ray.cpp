@@ -1,11 +1,6 @@
-//
-//  ray.cpp
-//  
-//
-//  Created by José Magalhaes  on 19/01/2022.
-//
-
 #include "ray.h"
+#include "vector.h"
+#include "sphere.h"
 
 Ray::Ray(Vector origin_, Vector direction_){
     _origin = origin_;
@@ -23,3 +18,34 @@ Vector& Ray::get_direction(){
 Vector Ray::get_point_at(const float t){
     return _origin + t * _direction;
 }
+
+bool Hit::compute(){
+    if(_has_hit){
+        _position = _ray.get_point_at(_distance_from_camera);
+        _normal = _sphere->get_normal_at(_position);
+        _has_hit = false;
+        return true;
+    }
+    else 
+        return false;
+}
+
+
+void Hit::update_if_closer(Sphere* new_sphere, float new_distance){
+    if(new_distance < _distance_from_camera){
+        _distance_from_camera = new_distance;
+        _sphere = new_sphere;
+        _has_hit = true;
+    }
+}
+
+Vector& Hit::get_position(){
+    return _position;
+}
+Vector& Hit::get_normal(){
+    return _normal;
+}
+float Hit::get_distance_from_camera(){
+    return _distance_from_camera;
+}
+
