@@ -30,36 +30,38 @@ int main() {
     Scene scene;
     
     //Walls
-    /*
+    
     scene.add_sphere(Sphere(Vector(0.,0.,-104.),100,MATERIAL_RED));
     scene.add_sphere(Sphere(Vector(0.,0.,+104.),100,MATERIAL_CYAN));
     scene.add_sphere(Sphere(Vector(-103.,0.,0.),100,MATERIAL_BLUE));
     scene.add_sphere(Sphere(Vector(+103.,0.,0.),100,MATERIAL_YELLOW));
     scene.add_sphere(Sphere(Vector(0.,-100.,0.),100,MATERIAL_GREEN));
     scene.add_sphere(Sphere(Vector(0.,+103.,0.),100,MATERIAL_MAGENTA));
-    */
+    
    
     //Center Sphere
     //scene.add_sphere(Sphere(Vector(0.4,0.4,-2.),.4,MATERIAL_MIRROR));
     scene.add_sphere(Sphere(Vector(0.,0.6,-1.),0.5,Material(Vector(0, 0, 0),MATERIAL_TYPE_TRANSPARENT,1.1)));
-    //scene.add_sphere(Sphere(Vector(0.,0.6,-1.),-0.49,Material(Vector(0, 0, 0),MATERIAL_TYPE_TRANSPARENT,1.1)));
+    scene.add_sphere(Sphere(Vector(0.,0.6,-1.),-0.49,Material(Vector(0, 0, 0),MATERIAL_TYPE_TRANSPARENT,1.1)));
     
     scene.set_light(Vector(1.,2.,0.), 1000000.);
-    scene.set_n_brdf(0);
+    scene.set_n_brdf(50);
     scene.set_roh_brdf(0.6);
     
     std::vector<unsigned char> image(W*H * 3, 0);
     
     for (int i = 0; i < H; i++) {
         for (int j = 0; j < W; j++) {
+            if(true || (i==H/2 && j == W/2+1)){
             Vector ray_dir(j-W/2+.5,-i+H/2-.5,-H/(2*tan(fov/2)));
             Ray r(cam_center,ray_dir);
             
-            Vector color = scene.get_color(r,5);
+            Vector color = scene.get_color(r,3);
             
             image[(i*W + j) * 3 + 0] = fmin(255,pow(color.get_x(),1/2.2));
             image[(i*W + j) * 3 + 1] = fmin(255,pow(color.get_y(),1/2.2));
             image[(i*W + j) * 3 + 2] = fmin(255,pow(color.get_z(),1/2.2));
+            }
         }
         std::cout << i << std::endl;
 

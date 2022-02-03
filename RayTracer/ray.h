@@ -39,10 +39,12 @@ public:
     Hit();
     Hit(Ray& ray_): _ray(ray_),_has_hit(false),_distance_from_camera(max_distance){}; //1000 = max distances
 
+    bool has_hit();
     bool compute();
     void update_if_closer(Sphere* new_sphere, float new_distance);
     Vector& get_position();
     Vector& get_normal();
+    Material& get_material();
     float get_distance_from_camera();
 };
 

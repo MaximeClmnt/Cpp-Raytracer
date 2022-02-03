@@ -19,6 +19,10 @@ Vector Ray::get_point_at(const float t){
     return _origin + t * _direction;
 }
 
+bool Hit::has_hit(){
+    return _has_hit;
+}
+
 bool Hit::compute(){
     if(_has_hit){
         _position = _ray.get_point_at(_distance_from_camera);
@@ -45,6 +49,11 @@ Vector& Hit::get_position(){
 Vector& Hit::get_normal(){
     return _normal;
 }
+
+Material& Hit::get_material(){
+    return _sphere->get_material();
+}
+
 float Hit::get_distance_from_camera(){
     return _distance_from_camera;
 }
