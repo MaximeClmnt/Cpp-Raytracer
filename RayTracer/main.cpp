@@ -14,6 +14,10 @@
 #include <assert.h>
 #include <iostream>
 
+
+//#include <pthread.h>
+#include <omp.h>
+
 #include "vector.h"
 #include "scene.h"
 #include "material.h"
@@ -40,7 +44,7 @@ int main() {
     
    
     //Center Sphere
-    //scene.add_sphere(Sphere(Vector(0.4,0.4,-2.),.4,MATERIAL_MIRROR));
+    scene.add_sphere(Sphere(Vector(0.4,0.4,-2.),.4,MATERIAL_MIRROR));
     scene.add_sphere(Sphere(Vector(0.,0.6,-1.),0.5,Material(Vector(0, 0, 0),MATERIAL_TYPE_TRANSPARENT,1.1)));
     scene.add_sphere(Sphere(Vector(0.,0.6,-1.),-0.49,Material(Vector(0, 0, 0),MATERIAL_TYPE_TRANSPARENT,1.1)));
     
@@ -49,10 +53,15 @@ int main() {
     scene.set_roh_brdf(0.6);
     
     std::vector<unsigned char> image(W*H * 3, 0);
-    
+    #pragma omp parallel for schedule(dynamic, 1)
     for (int i = 0; i < H; i++) {
+        //std::cout<< omp_get_num_threads() << std::endl;
         for (int j = 0; j < W; j++) {
+<<<<<<< Updated upstream
             if(true || (i==H/2 && j == W/2+1)){
+=======
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
             Vector ray_dir(j-W/2+.5,-i+H/2-.5,-H/(2*tan(fov/2)));
             Ray r(cam_center,ray_dir);
             
@@ -61,7 +70,26 @@ int main() {
             image[(i*W + j) * 3 + 0] = fmin(255,pow(color.get_x(),1/2.2));
             image[(i*W + j) * 3 + 1] = fmin(255,pow(color.get_y(),1/2.2));
             image[(i*W + j) * 3 + 2] = fmin(255,pow(color.get_z(),1/2.2));
+<<<<<<< Updated upstream
             }
+=======
+=======
+            int sqrt_n_path = 3;
+            Vector color(0,0,0);
+            for(int k = 0; k < sqrt_n_path * sqrt_n_path ; k++){
+
+                Vector ray_dir(j-W/2 + (float)(k/sqrt_n_path)/sqrt_n_path , -i+H/2 - (float)(k%sqrt_n_path)/sqrt_n_path ,-H/(2*tan(fov/2)));
+                Ray r(cam_center,ray_dir);
+                
+                color = color + scene.get_color(r,3);
+            }
+                color = color/(sqrt_n_path*sqrt_n_path);
+                
+                image[(i*W + j) * 3 + 0] = fmin(255,pow(color.get_x(),1/2.2));
+                image[(i*W + j) * 3 + 1] = fmin(255,pow(color.get_y(),1/2.2));
+                image[(i*W + j) * 3 + 2] = fmin(255,pow(color.get_z(),1/2.2));
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         }
         std::cout << i << std::endl;
 

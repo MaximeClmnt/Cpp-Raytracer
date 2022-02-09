@@ -14,7 +14,8 @@
                 "${workspaceFolder}\\sphere.cpp",
                 "${workspaceFolder}\\vector.cpp",
                 "-o",
-                "${workspaceFolder}\\bin\\main.exe"
+                "${workspaceFolder}\\bin\\main.exe",
+                "-fopenmp"
             ],
             "options": {
                 "cwd": "C:\\MinGW\\bin"
