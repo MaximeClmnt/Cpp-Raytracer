@@ -130,7 +130,7 @@ Vector Scene::get_color(Ray& r, int n_reflect){
             }
             
             //Prise en compte de la luminausié globale
-            if(n_reflect>0 && _n_brdf){
+            if(n_reflect>0){
                 Vector z = Vector(hit_norm);
                 Vector x = z.cross(Vector(1.,0.,0.));
                 if(x.sq_norm()<=0.01)
@@ -139,21 +139,21 @@ Vector Scene::get_color(Ray& r, int n_reflect){
                 Vector y = z.cross(x);
                 
                 color_global = Vector(0.,0.,0.);
-                for(int k=0; k<_n_brdf ; k++){
-                    float r1 = distrib(engine);
-                    float r2 = distrib(engine);
-                    
-                    Vector ray_dir(
-                            cos(2.*M_PI*r1)*sqrt(1.-r2) * x +
-                            sin(2.*M_PI*r1)*sqrt(1.-r2) * y +
-                            sqrt(r2) * z
-                                    );
-                    ray_dir.normalize();
-                    
-                    Ray random_ray(hit_pos+.0001*hit_norm,ray_dir);
-                    
-                    color_global = color_global + get_color(random_ray, 0);
-                }
+
+                float r1 = distrib(engine);
+                float r2 = distrib(engine);
+                
+                Vector ray_dir(
+                        cos(2.*M_PI*r1)*sqrt(1.-r2) * x +
+                        sin(2.*M_PI*r1)*sqrt(1.-r2) * y +
+                        sqrt(r2) * z
+                                );
+                ray_dir.normalize();
+                
+                Ray random_ray(hit_pos+.0001*hit_norm,ray_dir);
+                
+                color_global = color_global + get_color(random_ray, n_reflect-1);
+
                 color = color + color_global * material.get_albedo()/(float)(_n_brdf) * _roh_brdf;
             }
         }
