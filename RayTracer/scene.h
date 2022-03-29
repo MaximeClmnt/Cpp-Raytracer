@@ -4,6 +4,7 @@
 #include "vector.h"
 #include "sphere.h"
 #include "ray.h"
+#include <random>
 
 class Scene{
     std::vector<Sphere> _spheres;
@@ -14,6 +15,10 @@ class Scene{
     int _n_brdf;
     std::vector<Vector> _vect_brdf;
     float _roh_brdf;
+
+    
+    std::default_random_engine engine;
+    std::uniform_real_distribution<double> distrib;
     
     
 public:

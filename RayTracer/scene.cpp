@@ -8,14 +8,12 @@
 #include "vector.h"
 #include "ray.h"
 
-std::default_random_engine engine;
-std::uniform_real_distribution<double> distrib(0,1);
-
 
 Scene::Scene(Scene& sc){
 //    for(auto& sph: _spheres){
 //        _spheres.push_back(sc);
 //    }
+    distrib = std::uniform_real_distribution<double>(0,1);
     
     _light_center = sc._light_center;
     _light_power = sc._light_power;
@@ -154,7 +152,7 @@ Vector Scene::get_color(Ray& r, int n_reflect){
                 
                 color_global = color_global + get_color(random_ray, n_reflect-1);
 
-                color = color + color_global * material.get_albedo()/(float)(_n_brdf) * _roh_brdf;
+                color = color + color_global * material.get_albedo() * _roh_brdf;
             }
         }
 

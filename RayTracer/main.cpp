@@ -23,6 +23,7 @@
 #include "material.h"
 #include "ray.h"
 #include "sphere.h"
+#include <random>
  
 int main() {
     int W = 512;
@@ -32,6 +33,10 @@ int main() {
     float fov = M_PI/2;
     
     Scene scene;
+    
+    std::default_random_engine engine;
+    std::uniform_real_distribution<double>distrib(0,1);
+
     
     //Walls
     
@@ -59,19 +64,21 @@ int main() {
         //std::cout<< omp_get_num_threads() << std::endl;
         for (int j = 0; j < W; j++) {
 
-            int sqrt_n_path = 3;
             Vector color(0,0,0);
-            for(int k = 0; k < sqrt_n_path * sqrt_n_path ; k++){
-                for(int l = 0; l<50 ; l++){
+            for(int l = 0; l<50 ; l++){
+                Vector ray_dir(j-W/2-0.5 , -i+H/2-0.5 ,-H/(2*tan(fov/2)));
 
-                Vector ray_dir(j-W/2 + (float)(k/sqrt_n_path)/sqrt_n_path , -i+H/2 - (float)(k%sqrt_n_path)/sqrt_n_path ,-H/(2*tan(fov/2)));
-                Ray r(cam_center,ray_dir);
-                
-                color = color + scene.get_color(r,3);
-                }
-            }
-            color = color / (sqrt_n_path*sqrt_n_path*50);
+                double x = distrib(engine);
+                double y = distrib(engine);
+                double R = sqrt(-2*log(x));
+
+                Vector anti_aliazing(R * cos(2*3.1416*y)*0.5, R * sin(2*3.1416*y)*0.5, 0);
+
+                Ray r(cam_center,ray_dir+anti_aliazing);
             
+                color = color + scene.get_color(r,3);
+            }
+            color = color / 50;
             image[(i*W + j) * 3 + 0] = fmin(255,pow(color.get_x(),1/2.2));
             image[(i*W + j) * 3 + 1] = fmin(255,pow(color.get_y(),1/2.2));
             image[(i*W + j) * 3 + 2] = fmin(255,pow(color.get_z(),1/2.2));
@@ -83,3 +90,6 @@ int main() {
     
     return 0;
 }
+
+
+
