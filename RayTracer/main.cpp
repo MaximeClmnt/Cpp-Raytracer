@@ -28,6 +28,8 @@
 int main() {
     int W = 512;
     int H = 512;
+    int rays_per_pixel = 100;
+    int n_reflect = 3;
     
     Vector cam_center(-0.,.6,0.);
     float fov = M_PI/2;
@@ -55,7 +57,7 @@ int main() {
     scene.add_sphere(Sphere(Vector(0.,0.6,-1.),0.5,Material(Vector(1, 1, 1),MATERIAL_TYPE_DIFFUSE)));
     
     scene.set_light(Vector(1.,2.,0.), 1000000.);
-    scene.set_n_brdf(50);
+    scene.set_n_brdf(rays_per_pixel);
     scene.set_roh_brdf(0.6);
     
     std::vector<unsigned char> image(W*H * 3, 0);
@@ -65,7 +67,7 @@ int main() {
         for (int j = 0; j < W; j++) {
 
             Vector color(0,0,0);
-            for(int l = 0; l<50 ; l++){
+            for(int l = 0; l<rays_per_pixel ; l++){
                 Vector ray_dir(j-W/2-0.5 , -i+H/2-0.5 ,-H/(2*tan(fov/2)));
 
                 double x = distrib(engine);
@@ -76,9 +78,9 @@ int main() {
 
                 Ray r(cam_center,ray_dir+anti_aliazing);
             
-                color = color + scene.get_color(r,3);
+                color = color + scene.get_color(r,n_reflect);
             }
-            color = color / 50;
+            color = color / rays_per_pixel;
             image[(i*W + j) * 3 + 0] = fmin(255,pow(color.get_x(),1/2.2));
             image[(i*W + j) * 3 + 1] = fmin(255,pow(color.get_y(),1/2.2));
             image[(i*W + j) * 3 + 2] = fmin(255,pow(color.get_z(),1/2.2));
