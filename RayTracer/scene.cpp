@@ -15,7 +15,7 @@ Scene::Scene(Scene& sc){
 //    }
     distrib = std::uniform_real_distribution<double>(0,1);
     
-    _light_center = sc._light_center;
+    _light = sc._light;
     _light_power = sc._light_power;
     _n_brdf = sc._n_brdf;
     _roh_brdf = sc._roh_brdf;
@@ -25,14 +25,10 @@ void Scene::add_sphere(Sphere sphere_){
     _spheres.push_back(sphere_);
 }
 
-void Scene::set_light(Vector light_center_, Vector light_power_){
-    _light_power = light_power_;
-    _light_center = light_center_;
-}
-
-void Scene::set_light(Vector light_center_, float light_power_){
-    _light_power = light_power_ * Vector(1.,1.,1.);
-    _light_center = light_center_;
+void Scene::set_light(Sphere* light_, float light_power_){
+    _light_power = light_power_ * light_->get_material().get_albedo();
+    _light = light_;
+    _light->set_light();
 }
 
 void Scene::set_n_brdf(int n_brdf_){
@@ -43,7 +39,7 @@ void Scene::set_roh_brdf(float roh_brdf_){
     _roh_brdf = roh_brdf_;
 }
 
-Vector Scene::get_color(Ray& r, int n_reflect){
+Vector Scene::get_color(Ray& r, int n_reflect, bool show_light){
 
     Hit hit(r);
     Vector color(0,0,0);
@@ -56,7 +52,13 @@ Vector Scene::get_color(Ray& r, int n_reflect){
         Material material = hit.get_material();
         Vector hit_pos = hit.get_position();
         Vector hit_norm = hit.get_normal();
-            
+        bool is_light = hit.get_sphere()->is_light();
+        
+        if(is_light){
+            if(show_light)
+                color =  this->_light_power * material.get_albedo();
+        }
+        else
         if(material.is_mirror() && n_reflect>0){
             Ray reflect_ray(
                         hit_pos + 0.0001 * hit_norm,
@@ -103,11 +105,12 @@ Vector Scene::get_color(Ray& r, int n_reflect){
                     R = k0 + (1.0-k0)*pow(1 - i_dot_n,5);
                 else
                     R = k0 + (1.0-k0)*pow(1 + i_dot_n,5);
-                color = get_color(refract_ray,n_reflect) * (1.0-R) + get_color(reflect_ray,n_reflect-1) * R;
+                color = get_color(refract_ray,n_reflect-1) * (1.0-R) + get_color(reflect_ray,n_reflect-1) * R;
             }
         }
         else{
             //Calcul de l'intensité lumineuse par la lumière directe
+            /*
             Vector hit_to_light = (_light_center-hit_pos);
             float dist_to_light = hit_to_light.norm();
             Vector light_intensity = fmax(0.,(hit_to_light/dist_to_light).dot(hit_norm)) *_light_power/(dist_to_light*dist_to_light);
@@ -126,7 +129,55 @@ Vector Scene::get_color(Ray& r, int n_reflect){
             if(!inShadow){
                 color = light_intensity * material.get_albedo();
             }
+            */
+            Vector z = Vector(hit_pos-this->_light->getCenter()).normalize();
+            Vector x = z.cross(Vector(1.,0.,0.));
+            if(x.sq_norm()<=0.01)
+                x = z.cross(Vector(0.,1.,0.));
+            x.normalize();
+            Vector y = z.cross(x);
+
+            float r1 = distrib(engine);
+            float r2 = distrib(engine);
             
+            Vector random_dir(
+                    cos(2.*M_PI*r1)*sqrt(1.-r2) * x +
+                    sin(2.*M_PI*r1)*sqrt(1.-r2) * y +
+                    sqrt(r2) * z
+                            );
+            random_dir.normalize();
+            Vector random_point = this->_light->getCenter() + random_dir * this->_light->getRadius();
+
+            Vector wi = (random_point - hit_pos);
+            float sq_light_dist = wi.sq_norm();
+            wi.normalize();
+            Vector Np = random_dir;
+            float J = -1. * Np.dot(wi) / sq_light_dist;
+            float proba = z.dot(random_dir) / (M_PI * this->_light->getRadius() * this->_light->getRadius());  
+            Vector BRDF = material.get_albedo()/M_PI;
+            Vector light_intensity = this->_light_power 
+                                    * fmax(0., wi.dot(hit_norm))
+                                    * J 
+                                    * BRDF
+                                    / proba;
+
+            //Calcul de la visibilité
+            Vector hit_to_light = wi;
+            Ray to_light = Ray(hit_pos+.0001*hit_norm,hit_to_light);
+            Hit hit2(to_light);
+            bool inShadow = false;
+            for(auto& sph: _spheres) {
+                sph.intersect(to_light, hit2);
+                if(hit2.has_hit() && hit2.get_distance_from_camera() < sqrt(sq_light_dist)*0.99){
+                    inShadow = true;
+                    break;
+                }
+            }
+            
+            if(!inShadow){
+                color = light_intensity;
+            }
+
             //Prise en compte de la luminausié globale
             if(n_reflect>0){
                 Vector z = Vector(hit_norm);
@@ -135,8 +186,6 @@ Vector Scene::get_color(Ray& r, int n_reflect){
                     x = z.cross(Vector(0.,1.,0.));
                 x.normalize();
                 Vector y = z.cross(x);
-                
-                color_global = Vector(0.,0.,0.);
 
                 float r1 = distrib(engine);
                 float r2 = distrib(engine);
@@ -150,9 +199,9 @@ Vector Scene::get_color(Ray& r, int n_reflect){
                 
                 Ray random_ray(hit_pos+.0001*hit_norm,ray_dir);
                 
-                color_global = color_global + get_color(random_ray, n_reflect-1);
+                color_global = get_color(random_ray, n_reflect-1, false);
 
-                color = color + color_global * material.get_albedo() * _roh_brdf;
+                color = color + color_global * material.get_albedo() * _roh_brdf / 3.1416;
             }
         }
 

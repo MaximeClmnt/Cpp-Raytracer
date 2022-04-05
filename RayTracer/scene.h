@@ -9,7 +9,7 @@
 class Scene{
     std::vector<Sphere> _spheres;
     
-    Vector _light_center;
+    Sphere *_light;
     Vector _light_power;
     
     int _n_brdf;
@@ -30,11 +30,10 @@ public:
     Scene(Scene& sc);
     
     void add_sphere(Sphere sphere_);
-    void set_light(Vector light_center_, float light_power_);
-    void set_light(Vector light_center_, Vector light_power_);
+    void set_light(Sphere* light_, float light_power_);
     void set_n_brdf(int n_brdf_);
     void set_roh_brdf(float roh_brdf_);
-    Vector get_color(Ray& r, int n_reflect);
+    Vector get_color(Ray& r, int n_reflect, bool show_light = true);
     
 };
 

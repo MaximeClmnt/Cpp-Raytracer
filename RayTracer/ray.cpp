@@ -54,6 +54,10 @@ Material& Hit::get_material(){
     return _sphere->get_material();
 }
 
+Sphere* Hit::get_sphere(){
+    return _sphere;
+}
+
 float Hit::get_distance_from_camera(){
     return _distance_from_camera;
 }

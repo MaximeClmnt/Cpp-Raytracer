@@ -38,3 +38,20 @@ void Sphere::set_radius(const float radius_){
 Material& Sphere::get_material(){
     return _material;
 }
+
+Vector Sphere::getCenter(){
+    return _center;
+}
+
+void Sphere::set_light(){
+    isLight = true;
+}
+
+bool Sphere::is_light(){
+    return isLight;
+}
+
+
+float Sphere::getRadius(){
+    return _radius;
+}

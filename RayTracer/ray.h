@@ -45,6 +45,7 @@ public:
     Vector& get_position();
     Vector& get_normal();
     Material& get_material();
+    Sphere* get_sphere();
     float get_distance_from_camera();
 };
 
